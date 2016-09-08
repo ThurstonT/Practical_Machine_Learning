@@ -1,0 +1,122 @@
+---
+output: html_document
+---
+---
+title: "Practical Machine Learning Course Project"
+author: "T.R. Thurston"
+date: "September 3, 2016"
+output: html_document
+---
+
+###Assignment  
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: 
+http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting Exercise Dataset).
+
+#Data
+The training data used for this project are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data used to assess the prediction algorithm are available here:
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.
+
+#Approach
+The data sets were read into memory as fitTrain and fitTest.  fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing.  The training data set is used to train the random forest, RF, model to predict the classe variable. The testing data set was used for cross-validation to test the RF model.  The training data was examined using the View() function.  Variables that were most frequently reported by users' data were selected for training the Random Forest model.  Fifty-six predictor variables are used with the training data set when developing the Random Forest model.  This data set modeled with the Random Forest algorightm is computationally intensive, both in memory and processor utilization.  The model required more than two hours of processor time.  When the Randome Forest model was complete, the Predict function was used to cross validate it with the testing dataset.  The results were impressive, 99.898% of the predictioned classe values matched the classe values of the test data set.  The RF model had a 0.0102% sample error.  This level of prediction accuracy was satisfactory and further model development was not required.  
+
+#Model Application
+I used the Randomr Forest model with the fitTest data set.  The resulting twenty values had a 100% match to the expected values in the in project quiz.  
+
+#Conclusion
+The Rando Forest model was very accurate, as expected.  The Random Forest model has shown to be very accurate in many previous applications. The drawback of the Random Forest model is that it consumes significant memory and processor resources.  
+
+###Data Processing 
+```{r}
+#######################
+## Course Project
+#####################
+### Read Libraries
+library(caret)
+library(AppliedPredictiveModeling)
+library(randomForest)
+```
+Read the data into fitTrain and fitTest
+```{r}
+## Read information
+fitTrain <- read.csv("C:/Coursera/8_Machine_Leaning/Week4/Assignment/training.csv", stringsAsFactors= FALSE)
+fitTest <- read.csv("C:/Coursera/8_Machine_Leaning/Week4/Assignment/testing.csv", stringsAsFactors= FALSE)
+```
+Set the random number generator seed so that the results are reproducible
+```{r}
+# Set seed 
+set.seed(3433)
+```
+Split the fitTrainng data into to portions; training and testing.  These data sets will allow for cross validation of the RF model.
+
+```{r}
+# split training data into training and testing data to develop the model in preparation for cross validation
+inTrain <- createDataPartition(y=fitTrain$classe, p=0.7, list=FALSE)
+training <- fitTrain[inTrain,]
+testing <- fitTrain[-inTrain,]
+```
+```{r }
+### train using a random forest prediction 
+modRF2 <- train(classe ~ raw_timestamp_part_1 + raw_timestamp_part_2 + cvtd_timestamp + 
+    num_window +          roll_belt +         pitch_belt +           yaw_belt +      
+    total_accel_belt +    gyros_belt_x +      gyros_belt_y +         gyros_belt_z +
+    accel_belt_x +        accel_belt_y +      accel_belt_z +         magnet_belt_x + 
+    magnet_belt_y +       magnet_belt_z +     roll_arm +             pitch_arm +     
+    yaw_arm +             total_accel_arm +   gyros_arm_x +          gyros_arm_y +  
+    gyros_arm_z +         accel_arm_x +       accel_arm_y +          accel_arm_z +    
+    magnet_arm_x +        magnet_arm_y +      magnet_arm_z +         roll_dumbbell +   
+    pitch_dumbbell+       yaw_dumbbell +      total_accel_dumbbell + gyros_dumbbell_x +
+    gyros_dumbbell_y +    gyros_dumbbell_z +  accel_dumbbell_x +     accel_dumbbell_y +   
+    accel_dumbbell_z +    magnet_dumbbell_x + magnet_dumbbell_y +    magnet_dumbbell_z  +  
+    roll_forearm +        pitch_forearm +     yaw_forearm  +         total_accel_forearm +
+    gyros_forearm_x +     gyros_forearm_y +   gyros_forearm_z +      accel_forearm_x +
+    accel_forearm_y +     accel_forearm_z +   magnet_forearm_x +     magnet_forearm_y + magnet_forearm_z,
+    data=training,  method="rf", prox=TRUE, na.action(na.omit))
+
+modRF2
+```
+The modRF2 model is a Random forest 
+
+The three most predictive variables are:
+1) raw_timestamp_part_2
+2) yaw_arm
+3) magnet_forearm_z
+
+Predict the classe variable using the testing data set
+```{r }
+#predict the classe for the testing set
+# to see how cross validation 
+pred1 <- predict(modRF2, testing)
+# check the accuracy of the testing set
+```
+Calculate the Accuracy of the random forest prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set.  
+```{r }
+predAcc <- round(100*sum(pred1 == testing$classe)/length(testing$classe),3)
+predAccs <- paste("Calculated Accuracy is: ",predAcc,"%", sep="")
+print(predAccs)
+```
+
+Calculate the Sample Error of the prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set. 
+
+```{r }
+# the sampling error is determined by the following equation 
+saa <- round(100*(1- sum(pred1 == testing$classe)/length(testing$classe)),3)
+saa1 <- paste("Sample Error is ",saa, "%", sep = "") 
+print(c(saa1))
+```
+
+Calculate the classe for the input fitTest data set.  
+
+```{r }
+# predict the input test set
+z2  <- predict(modRF2, fitTest)
+print(z2)
+###  These numbers matched the quiz 20 for 20 
+
+```
+
+These predicted values were a one hundred percent match to the expected values. 

@@ -134,16 +134,15 @@ $(document).ready(function () {
 </div>
 <div id="approach" class="section level1">
 <h1>Approach</h1>
-<p>The data sets were read into memory as fitTrain and fitTest. fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing. The training data set is used to train the random forest, RF, model to predict the classe variable. The testing data set was used for cross-validation to test the RF model. The training data was examined using the View() function. Variables that were most frequently reported by users’ data were selected for training the RF model. Fifty-six predictor variables are used with the training data set when developing the RF model. This data set is computationally intensive, both in memory and processor utilization.<br />
-The model required more than an hour of processor time. When the RF model was complete, the Predict function was used to cross validate it with the testing dataset. The results were impressive, 99.898% of the predictioned classe values matched the classe values of the test data set. The RF model had a 0.0102% sample error.</p>
+<p>The data sets were read into memory as fitTrain and fitTest. fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing. The training data set is used to train the random forest, RF, model to predict the classe variable. The testing data set was used for cross-validation to test the RF model. The training data was examined using the View() function. Variables that were most frequently reported by users’ data were selected for training the Random Forest model. Fifty-six predictor variables are used with the training data set when developing the Random Forest model. This data set modeled with the Random Forest algorightm is computationally intensive, both in memory and processor utilization. The model required more than two hours of processor time. When the Randome Forest model was complete, the Predict function was used to cross validate it with the testing dataset. The results were impressive, 99.898% of the predictioned classe values matched the classe values of the test data set. The RF model had a 0.0102% sample error. This level of prediction accuracy was satisfactory and further model development was not required.</p>
 </div>
 <div id="model-application" class="section level1">
 <h1>Model Application</h1>
-<p>I used the RF model with the fitTest data set. The resulting twenty values had a 100% match to the expected values in the in project quiz.</p>
+<p>I used the Randomr Forest model with the fitTest data set. The resulting twenty values had a 100% match to the expected values in the in project quiz.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>The model was very accurate. It consumed significant memory and processor time resources.</p>
+<p>The Rando Forest model was very accurate, as expected. The Random Forest model has shown to be very accurate in many previous applications. The drawback of the Random Forest model is that it consumes significant memory and processor resources.</p>
 <div id="data-processing" class="section level3">
 <h3>Data Processing</h3>
 <pre class="r"><code>#######################
@@ -169,7 +168,7 @@ fitTest &lt;- read.csv(&quot;C:/Coursera/8_Machine_Leaning/Week4/Assignment/test
 <p>Set the random number generator seed so that the results are reproducible</p>
 <pre class="r"><code># Set seed 
 set.seed(3433)</code></pre>
-<p>Split the fitTrainng data into to portions; training and testing. These data sets will allow for cross validation of the RM model.</p>
+<p>Split the fitTrainng data into to portions; training and testing. These data sets will allow for cross validation of the RF model.</p>
 <pre class="r"><code># split training data into training and testing data to develop the model in preparation for cross validation
 inTrain &lt;- createDataPartition(y=fitTrain$classe, p=0.7, list=FALSE)
 training &lt;- fitTrain[inTrain,]
