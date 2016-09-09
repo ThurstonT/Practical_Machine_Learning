@@ -128,21 +128,26 @@ $(document).ready(function () {
 </div>
 <div id="data" class="section level1">
 <h1>Data</h1>
-<p>The training data used for this project are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a></p>
-<p>The test data used to assess the prediction algorithm are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a></p>
+<p>The training data used for this project are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv</a> The training data are named fitTrain.</p>
+<p>The test data used to assess the prediction algorithm are available here: <a href="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv" class="uri">https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv</a> The test data are named fitTest.</p>
 <p>The data for this project come from this source: <a href="http://groupware.les.inf.puc-rio.br/har" class="uri">http://groupware.les.inf.puc-rio.br/har</a>.</p>
 </div>
 <div id="approach" class="section level1">
 <h1>Approach</h1>
-<p>The data sets were read into memory as fitTrain and fitTest. fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing. The training data set is used to train the random forest, RF, model to predict the classe variable. The testing data set was used for cross-validation to test the RF model. The training data was examined using the View() function. Variables that were most frequently reported by users’ data were selected for training the Random Forest model. Fifty-six predictor variables are used with the training data set when developing the Random Forest model. This data set modeled with the Random Forest algorightm is computationally intensive, both in memory and processor utilization. The model required more than two hours of processor time. When the Randome Forest model was complete, the Predict function was used to cross validate it with the testing dataset. The results were impressive, 99.898% of the predictioned classe values matched the classe values of the test data set. The RF model had a 0.0102% sample error. This level of prediction accuracy was satisfactory and further model development was not required.</p>
+<p>The data sets were read into memory as fitTrain and fitTest. fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing. The training data set would be used to train the model and the testing data set would be used to test the model.</p>
+</div>
+<div id="data-exploration" class="section level1">
+<h1>Data Exploration</h1>
+<p>The training data was first examined using the View() function. The fifty-six variables that were most frequently reported by users’ data were selected for training the prediction model. Initially the Random Forest model was evaluated using the Caret package’s train function on the training data set. The objective of the train function was to predict the <strong>classe</strong> variable. This first experiment was done to understand the feasibility of using all fifty-six variables to predict the <strong>classe</strong> function. It is computationally, both memory and processor, intensive to use all fifty-six variables with the Random Forest model.</p>
+<p>The Random Forest model required more than two hours of processor time to complete training. When the Random Forest model was complete, the Predict function was used to cross-validate the model with the testing data set. The results were impressive, 99.898% of the predicted <strong>classe</strong> values matched the <strong>classe</strong> values of the test data set. The Random Forest model had a 0.0102% sample error. This level of prediction accuracy was satisfactory and further model development was not required. I had planned to combine other models to increase the prediction accuracy, fortunately this was not necessary.</p>
 </div>
 <div id="model-application" class="section level1">
 <h1>Model Application</h1>
-<p>I used the Randomr Forest model with the fitTest data set. The resulting twenty values had a 100% match to the expected values in the in project quiz.</p>
+<p>I used the Random Forest model with the fitTest data set. The resulting twenty values had a 100% match to the expected values in the in project quiz.</p>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>The Rando Forest model was very accurate, as expected. The Random Forest model has shown to be very accurate in many previous applications. The drawback of the Random Forest model is that it consumes significant memory and processor resources.</p>
+<p>The Random Forest model was very accurate, as expected. In many experiments and tests performed by other people and referenced in the class and in machine learning writings, the Random Forest model has shown to be very accurate. The drawback of the Random Forest model is that it consumes significant memory and processor resources.</p>
 <div id="data-processing" class="section level3">
 <h3>Data Processing</h3>
 <pre class="r"><code>#######################
@@ -168,7 +173,7 @@ fitTest &lt;- read.csv(&quot;C:/Coursera/8_Machine_Leaning/Week4/Assignment/test
 <p>Set the random number generator seed so that the results are reproducible</p>
 <pre class="r"><code># Set seed 
 set.seed(3433)</code></pre>
-<p>Split the fitTrainng data into to portions; training and testing. These data sets will allow for cross validation of the RF model.</p>
+<p>Split the fitTrain data into to portions; training and testing. These data sets will allow for cross validation of the RF model.</p>
 <pre class="r"><code># split training data into training and testing data to develop the model in preparation for cross validation
 inTrain &lt;- createDataPartition(y=fitTrain$classe, p=0.7, list=FALSE)
 training &lt;- fitTrain[inTrain,]
@@ -211,23 +216,23 @@ modRF2</code></pre>
 ## The final value used for the model was mtry = 38.</code></pre>
 <p>The modRF2 model is a Random forest</p>
 <p>The three most predictive variables are: 1) raw_timestamp_part_2 2) yaw_arm 3) magnet_forearm_z</p>
-<p>Predict the classe variable using the testing data set</p>
+<p>Predict the <strong>classe</strong> variable using the testing data set</p>
 <pre class="r"><code>#predict the classe for the testing set
 # to see how cross validation 
 pred1 &lt;- predict(modRF2, testing)
 # check the accuracy of the testing set</code></pre>
-<p>Calculate the Accuracy of the random forest prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set.</p>
+<p>Calculate the Accuracy of the random forest prediction algorithm by comparing the predicted <strong>classe</strong> for the test set of the fitTrain data set with the actual <strong>classe</strong> of the test set of the fitTrain data set.</p>
 <pre class="r"><code>predAcc &lt;- round(100*sum(pred1 == testing$classe)/length(testing$classe),3)
 predAccs &lt;- paste(&quot;Calculated Accuracy is: &quot;,predAcc,&quot;%&quot;, sep=&quot;&quot;)
 print(predAccs)</code></pre>
 <pre><code>## [1] &quot;Calculated Accuracy is: 99.898%&quot;</code></pre>
-<p>Calculate the Sample Error of the prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set.</p>
+<p>Calculate the Sample Error of the prediction algorithm by comparing the predicted <strong>classe</strong> for the test set of the fitTrain data set with the actual <strong>classe</strong> of the test set of the fitTrain data set.</p>
 <pre class="r"><code># the sampling error is determined by the following equation 
 saa &lt;- round(100*(1- sum(pred1 == testing$classe)/length(testing$classe)),3)
 saa1 &lt;- paste(&quot;Sample Error is &quot;,saa, &quot;%&quot;, sep = &quot;&quot;) 
 print(c(saa1))</code></pre>
 <pre><code>## [1] &quot;Sample Error is 0.102%&quot;</code></pre>
-<p>Calculate the classe for the input fitTest data set.</p>
+<p>Calculate the <strong>classe</strong> for the input fitTest data set.</p>
 <pre class="r"><code># predict the input test set
 z2  &lt;- predict(modRF2, fitTest)
 print(z2)</code></pre>

@@ -14,21 +14,26 @@ http://groupware.les.inf.puc-rio.br/har (see the section on the Weight Lifting E
 
 #Data
 The training data used for this project are available here:
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv  The training data are named fitTrain. 
 
 The test data used to assess the prediction algorithm are available here:
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv  The test data are named fitTest. 
 
 The data for this project come from this source: http://groupware.les.inf.puc-rio.br/har.
 
 #Approach
-The data sets were read into memory as fitTrain and fitTest.  fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing.  The training data set is used to train the random forest, RF, model to predict the classe variable. The testing data set was used for cross-validation to test the RF model.  The training data was examined using the View() function.  Variables that were most frequently reported by users' data were selected for training the Random Forest model.  Fifty-six predictor variables are used with the training data set when developing the Random Forest model.  This data set modeled with the Random Forest algorightm is computationally intensive, both in memory and processor utilization.  The model required more than two hours of processor time.  When the Randome Forest model was complete, the Predict function was used to cross validate it with the testing dataset.  The results were impressive, 99.898% of the predictioned classe values matched the classe values of the test data set.  The RF model had a 0.0102% sample error.  This level of prediction accuracy was satisfactory and further model development was not required.  
+The data sets were read into memory as fitTrain and fitTest.  fitTest is the test set and fitTrain is the training set. The training set fitTrain, was split into two data sets; training and testing.  The training data set would be used to train the model and the testing data set would be used to test the model.  
+
+#Data Exploration
+The training data was first examined using the View() function. The fifty-six variables that were most frequently reported by users' data were selected for training the prediction model.  Initially the Random Forest model was evaluated using the Caret package's train function on the training data set.  The objective of the train function was to predict the **classe** variable.  This first experiment was done to understand the feasibility of using all fifty-six variables to predict the **classe** function.  It is computationally, both memory and processor, intensive to use all fifty-six variables with the Random Forest model.  
+
+The Random Forest model required more than two hours of processor time to complete training.  When the Random Forest model was complete, the Predict function was used to cross-validate the model with the testing data set.  The results were impressive, 99.898% of the predicted **classe** values matched the **classe** values of the test data set.  The Random Forest model had a 0.0102% sample error.  This level of prediction accuracy was satisfactory and further model development was not required.  I had planned to combine other models to increase the prediction accuracy, fortunately this was not necessary.  
 
 #Model Application
-I used the Randomr Forest model with the fitTest data set.  The resulting twenty values had a 100% match to the expected values in the in project quiz.  
+I used the Random Forest model with the fitTest data set.  The resulting twenty values had a 100% match to the expected values in the in project quiz.  
 
 #Conclusion
-The Rando Forest model was very accurate, as expected.  The Random Forest model has shown to be very accurate in many previous applications. The drawback of the Random Forest model is that it consumes significant memory and processor resources.  
+The Random Forest model was very accurate, as expected.  In many experiments and tests performed by other people and referenced in the class and in machine learning writings, the Random Forest model has shown to be very accurate.  The drawback of the Random Forest model is that it consumes significant memory and processor resources.  
 
 ###Data Processing 
 ```{r}
@@ -51,7 +56,7 @@ Set the random number generator seed so that the results are reproducible
 # Set seed 
 set.seed(3433)
 ```
-Split the fitTrainng data into to portions; training and testing.  These data sets will allow for cross validation of the RF model.
+Split the fitTrain data into to portions; training and testing.  These data sets will allow for cross validation of the RF model.
 
 ```{r}
 # split training data into training and testing data to develop the model in preparation for cross validation
@@ -86,21 +91,21 @@ The three most predictive variables are:
 2) yaw_arm
 3) magnet_forearm_z
 
-Predict the classe variable using the testing data set
+Predict the **classe** variable using the testing data set
 ```{r }
 #predict the classe for the testing set
 # to see how cross validation 
 pred1 <- predict(modRF2, testing)
 # check the accuracy of the testing set
 ```
-Calculate the Accuracy of the random forest prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set.  
+Calculate the Accuracy of the random forest prediction algorithm by comparing the predicted **classe** for the test set of the fitTrain data set with the actual **classe** of the test set of the fitTrain data set.  
 ```{r }
 predAcc <- round(100*sum(pred1 == testing$classe)/length(testing$classe),3)
 predAccs <- paste("Calculated Accuracy is: ",predAcc,"%", sep="")
 print(predAccs)
 ```
 
-Calculate the Sample Error of the prediction algorithm by comparing the predicted classe for the test set of the fitTrain data set with the actual classe of the test set of the fitTrain data set. 
+Calculate the Sample Error of the prediction algorithm by comparing the predicted **classe** for the test set of the fitTrain data set with the actual **classe** of the test set of the fitTrain data set. 
 
 ```{r }
 # the sampling error is determined by the following equation 
@@ -109,7 +114,7 @@ saa1 <- paste("Sample Error is ",saa, "%", sep = "")
 print(c(saa1))
 ```
 
-Calculate the classe for the input fitTest data set.  
+Calculate the **classe** for the input fitTest data set.  
 
 ```{r }
 # predict the input test set
